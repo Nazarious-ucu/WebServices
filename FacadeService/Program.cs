@@ -1,12 +1,24 @@
+using Grpc.Net.Client;
+using LoggingService; // Простір імен з .proto (csharp_namespace)
+using System.Net.Http;
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+var loggingServiceUrl = builder.Configuration["Logging:ServiceUrl"] ?? "http://localhost:5011";
+var messageServiceUrl = builder.Configuration["MessageService:Url"] ?? "http://localhost:5012";
+
+builder.Services.AddHttpClient("MessageClient", c =>
+{
+    c.BaseAddress = new Uri(messageServiceUrl);
+});
+
+builder.Services.AddSingleton(sp =>
+{
+    var channel = GrpcChannel.ForAddress(loggingServiceUrl);
+    return new LoggingService.LoggingService.LoggingServiceClient(channel);
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -14,28 +26,29 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapPost("/api/msg", async (string msg, LoggingService.LoggingService.LoggingServiceClient client) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
+    var request = new SaveRequest
     {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast");
+        Id = Guid.NewGuid().ToString(),
+        Msg = msg,
+    };
+    var reply = await client.SaveMessageAsync(request);
+    return Results.Ok($"LoggingService replied: {reply.Success}");
+});
+
+
+app.MapGet("/api",
+    async (LoggingService.LoggingService.LoggingServiceClient client, IHttpClientFactory httpClientFactory) =>
+    {
+        var request = new Empty { };
+        var reply = await client.GetAllMessagesAsync(request);
+
+        var logs = string.Join("; ", reply.Messages);
+        
+        var messageClient = httpClientFactory.CreateClient("MessageClient");
+        var msgServiceReply = await messageClient.GetStringAsync("/api/msg");
+        return Results.Ok($"LoggingService replied: {logs}, message: {msgServiceReply}");
+    });
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

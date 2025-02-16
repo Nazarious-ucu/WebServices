@@ -1,0 +1,23 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "LoggingService";
+
+service LoggingService {
+  rpc SaveMessage (SaveRequest) returns (LogReply);
+  rpc GetAllMessages (Empty) returns (AllMessageReply);
+}
+
+message SaveRequest {
+  string id = 1;
+  string msg = 2;
+}
+
+message LogReply {
+  string success = 1;
+}
+
+message AllMessageReply {
+  repeated string messages = 1;
+}
+
+message Empty {}
