@@ -1,6 +1,14 @@
 @BasicsMicroservicesLab1_HostAddress = https://localhost:5010
 
-POST {{BasicsMicroservicesLab1_HostAddress}}/api/msg?msg=Fuck
+POST {{BasicsMicroservicesLab1_HostAddress}}/api/msg?msg=Hello
+
+
+###
+POST {{BasicsMicroservicesLab1_HostAddress}}/api/msg?msg=Hello_World
+
+
+###
+POST {{BasicsMicroservicesLab1_HostAddress}}/api/msg?msg=Nazar
 
 
 ###
