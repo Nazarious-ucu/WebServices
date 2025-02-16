@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FacadeService", "FacadeService\FacadeService.csproj", "{95CC003B-F7DE-41CF-A3A0-D9F39F808294}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoggingService", "LoggingService\LoggingService.csproj", "{44B82653-321A-4542-90F9-2DB3FCEC85A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageService", "MessageService\MessageService.csproj", "{4777555E-2CD3-4D9C-8572-07596BE32FDA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{95CC003B-F7DE-41CF-A3A0-D9F39F808294}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95CC003B-F7DE-41CF-A3A0-D9F39F808294}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95CC003B-F7DE-41CF-A3A0-D9F39F808294}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95CC003B-F7DE-41CF-A3A0-D9F39F808294}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44B82653-321A-4542-90F9-2DB3FCEC85A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44B82653-321A-4542-90F9-2DB3FCEC85A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44B82653-321A-4542-90F9-2DB3FCEC85A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44B82653-321A-4542-90F9-2DB3FCEC85A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4777555E-2CD3-4D9C-8572-07596BE32FDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4777555E-2CD3-4D9C-8572-07596BE32FDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4777555E-2CD3-4D9C-8572-07596BE32FDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4777555E-2CD3-4D9C-8572-07596BE32FDA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
