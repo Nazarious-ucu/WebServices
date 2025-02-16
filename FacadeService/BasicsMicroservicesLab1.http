@@ -1,6 +1,9 @@
-@BasicsMicroservicesLab1_HostAddress = http://localhost:5163
+@BasicsMicroservicesLab1_HostAddress = https://localhost:5010
 
-GET {{BasicsMicroservicesLab1_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{BasicsMicroservicesLab1_HostAddress}}/api/msg?msg=Fuck
+
 
 ###
+
+
+GET {{BasicsMicroservicesLab1_HostAddress}}/api

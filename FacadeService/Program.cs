@@ -1,9 +1,9 @@
 using Grpc.Net.Client;
-using LoggingService; // Простір імен з .proto (csharp_namespace)
-using System.Net.Http;
+using LoggingService;
+
 var builder = WebApplication.CreateBuilder(args);
 
-var loggingServiceUrl = builder.Configuration["Logging:ServiceUrl"] ?? "http://localhost:5011";
+var loggingServiceUrl = builder.Configuration["Logging:Address"] ?? "https://localhost:5011";
 var messageServiceUrl = builder.Configuration["MessageService:Url"] ?? "http://localhost:5012";
 
 builder.Services.AddHttpClient("MessageClient", c =>
@@ -24,7 +24,6 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
 
 app.MapPost("/api/msg", async (string msg, LoggingService.LoggingService.LoggingServiceClient client) =>
 {

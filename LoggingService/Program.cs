@@ -1,41 +1,46 @@
+using Grpc.Core;
+using LoggingService;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+var facadeServiceConfiguration = builder.Configuration["Facade:Address"] ?? "http://localhost:5010";
 
+builder.Services.AddGrpc();
+// builder.WebHost.ConfigureKestrel(options =>
+// {
+//     options.ListenLocalhost(5011, o => o.UseHttps());
+// });
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+app.MapGrpcService<LoggingServiceImpl>();
 
 app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast");
+app.MapGet("/", () => "This is the LoggingService. Use a gRPC client to call it.");
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+
+
+public class LoggingServiceImpl : LoggingService.LoggingService.LoggingServiceBase {
+    private static readonly Dictionary<string, string> Messages = new();
+
+    public override Task<LogReply> SaveMessage(SaveRequest message, ServerCallContext context)
+    {
+        if (Messages.ContainsKey(message.Id))
+        {
+            Console.WriteLine($"[LoggingService] Duplicate skipped: [{message.Id}] = {message.Msg}");
+            return Task.FromResult(new LogReply { Success = "Duplicate skipped" });
+        }
+        
+        Messages.Add(message.Id, message.Msg);
+        return Task.FromResult(new LogReply { Success = "Success" });
+    }
+
+    public override Task<AllMessageReply> GetAllMessages(Empty request, ServerCallContext context)
+    {
+        var reply = new AllMessageReply();
+        
+        reply.Messages.AddRange(Messages.Values);
+        return Task.FromResult(reply);
+    }
 }
